@@ -1,6 +1,29 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 import psycopg2
 import os
+from casual_use import *
+from personnel import personnel_menu
+
+
+def init(conn):
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT table_schema,table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY table_schema,table_name")
+    rows = cursor.fetchall()
+    for row in rows:
+        try:
+            cursor.execute("drop table IF EXISTS " + row[1] + " cascade")
+        except psycopg2.Error:
+            pass
+        try:
+            cursor.execute("drop view IF EXISTS " + row[1] + " cascade")
+        except psycopg2.Error:
+            pass
+    sqlfile = open('init.sql', 'r')
+    cursor.execute(sqlfile.read())
+    cursor.close()
+    print("\tInitialisation de la BDD correctement effectuée.")
 
 
 def menu(conn):
@@ -12,14 +35,28 @@ def menu(conn):
     while(continu):
         print("\n\t### Que voulez-vous faire ? ###")
         print("\n\t0\tQuitter")
-        print("\n\t1\tGestion des clients et de leurs animaux")
-        print("\n\t2\tGestion interne (personnel, medicaments, rapports, especes)")
+        print("\n\t1\tInitialisation de la BDD")
+        print("\t2\tGestion des clients et de leurs animaux")
+        print("\t3\tGestion du personnel")
         choice = int(input("\n> "))
         os.system("clear")
 
         if(choice == 0):
             continu = False
+
             print("\n\tAu revoir.")
+        elif(choice == 1):
+            os.system("clear")
+            print("\n\tEtes-vous sûr d'initialiser la BDD ? Cela supprimera les tables et données déjà existentes.")
+            print("\t0\tNon")
+            print("\tautre\tOui")
+            choice = int(input("\n> "))
+            if(choice != 0):
+                init(conn)
+        elif(choice == 2):
+            casual_use(conn)
+        elif(choice == 3):
+            personnel_menu(conn)
 
 
 def main():

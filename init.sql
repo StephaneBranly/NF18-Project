@@ -1,11 +1,13 @@
+CREATE SEQUENCE client_id_seq;
 CREATE TABLE CLIENT (
-ID INTEGER PRIMARY KEY,
+ID smallint PRIMARY KEY DEFAULT nextval('client_id_seq') ,
 Nom VARCHAR NOT NULL,
 Prenom VARCHAR NOT NULL,
 DateDeNaissance DATE NOT NULL,
 Adresse VARCHAR,
 NumeroTel VARCHAR
 );
+ALTER SEQUENCE client_id_seq OWNED BY CLIENT.ID;
 
 CREATE SEQUENCE personnel_id_seq;
 CREATE TABLE PERSONNEL (
@@ -148,11 +150,11 @@ VALUES (3, 'Pilou', '2016-02-07', 'Moyenne', 3, 238, 'Oiseaux') ;
 
 
 
-INSERT INTO CLIENT (ID, Nom, Prenom, DateDeNaissance, Adresse, NumeroTel)
-VALUES (1, 'Kerjean', 'Loïck', '2000-07-26', '30 rue de paris 60200', '0659046286') ;
+INSERT INTO CLIENT (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel)
+VALUES ('Kerjean', 'Loïck', '2000-07-26', '30 rue de paris 60200', '0659046286') ;
 
-INSERT INTO CLIENT (ID, Nom, Prenom, DateDeNaissance, Adresse, NumeroTel)
-VALUES (2, 'Trupin', 'Louis', '1999-08-22', '10 rue de la liberté 02600', '0756927645') ;
+INSERT INTO CLIENT (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel)
+VALUES ('Trupin', 'Louis', '1999-08-22', '10 rue de la liberté 02600', '0756927645') ;
 
 
 

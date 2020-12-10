@@ -1,9 +1,8 @@
 #!/usr/local/bin/python3
 import psycopg2
 import os
-from casual_use import *
 from personnel import personnel_menu
-
+from clients import client_menu
 
 def init(conn):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
@@ -36,7 +35,7 @@ def menu(conn):
         print("\n\t### Que voulez-vous faire ? ###")
         print("\n\t0\tQuitter")
         print("\n\t1\tInitialisation de la BDD")
-        print("\t2\tGestion des clients et de leurs animaux")
+        print("\t2\tGestion des clients")
         print("\t3\tGestion du personnel")
         try:
             choice = int(input("\n> "))
@@ -57,7 +56,7 @@ def menu(conn):
             if(choice != 0):
                 init(conn)
         elif(choice == 2):
-            casual_use(conn)
+            client_menu(conn)
         elif(choice == 3):
             personnel_menu(conn)
 

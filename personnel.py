@@ -26,7 +26,7 @@ def personnel_menu(conn):
         elif(choice == 1):
             voir_membres_personnel(conn)
         elif(choice==2):
-            ajouter_member_personnel(conn)
+            ajouter_membre_personnel(conn)
         elif(choice==3):
             modifier_membre_personnel(conn)
         elif(choice==4):
@@ -47,7 +47,7 @@ def voir_membres_personnel(conn):
     input()
     cur.close()
 
-def ajouter_member_personnel(conn):  
+def ajouter_membre_personnel(conn):  
     cur = conn.cursor()
     print("\tInsertion d'un nouveau membre du personnel :")
     nom = quote(input("\tIndiquez le nom\n\t> "))

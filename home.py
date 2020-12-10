@@ -5,6 +5,7 @@ from personnel import personnel_menu
 from clients import client_menu
 from patients import patient_menu
 from especes import espece_menu
+from medicaments import medicament_menu
 
 def init(conn):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
@@ -41,6 +42,7 @@ def menu(conn):
         print("\t3\tGestion des patients")
         print("\t4\tGestion du personnel")
         print("\t5\tGestion des espèces")
+        print("\t6\tGestion des médicaments")
         try:
             choice = int(input("\n> "))
         except:
@@ -67,6 +69,8 @@ def menu(conn):
             personnel_menu(conn)
         elif(choice == 5):
             espece_menu(conn)
+        elif(choice == 6):
+            medicament_menu(conn)
 
 def main():
     try:

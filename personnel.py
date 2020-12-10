@@ -2,6 +2,7 @@
 import psycopg2
 import os
 import datetime
+import json 
 
 def personnel_menu(conn):
     choice = 0
@@ -14,6 +15,7 @@ def personnel_menu(conn):
         print("\t2\tAjouter un membre du personnel")
         print("\t3\tModifier un membre du personnel")
         print("\t4\tRechercher un personnel par son nom ou prénom")
+        print("\t5\tVoir le détail de la fiche d'un membre du personnel")
         choice = int(input("\n> "))
         os.system("clear")
 
@@ -38,7 +40,7 @@ def voir_membres_personnel(conn):
     print("\tVoici les membres du personnel :")
     print("\t#ID")
     for raw in res:
-        print("\t#%s\tPOSTE : %s\t\t%s %s (né le %s)\t(coordonnées : - tel: %s - adresse %s)" % (raw[0], raw[6], raw[1], raw[2], raw[3], raw[5], raw[4]))
+        print("\t#%s\tPOSTE : %s\t%s %s" % (raw[0], raw[6], raw[1], raw[2]))
     input()
     cur.close()
 
@@ -54,8 +56,26 @@ def ajouter_member_personnel(conn):
     jour_bd= int(input("\tIndiquez le jour de naissance\n\t> "))
     date_de_naissance= quote(datetime.date(annee_bd, mois_bd, jour_bd))
     poste = quote(input("\tIndiquez le poste (Veto, Assistant)\n\t> "))
+    specialites = []
+    specialite = "aa"
+    while specialite != "":
+        print("\tSpecialites possibles :")
+        sql = "SELECT * FROM ESPECE ORDER BY ESPECE ASC"
+        cur.execute(sql)
+        results = cur.fetchall()
+        for result in results:
+            print("\t- %s" % (result[0]))
+        specialite = str(input("\n\tIndiquez une spécialité à ajouter ('entrée' quand fini)\n\t> "))
+        if(specialite!=""):
+            sql = "SELECT * FROM ESPECE WHERE ESPECE=%s;" % (quote(specialite))
+            cur.execute(sql)
+            if(cur.fetchall()):
+                specialites.append(specialite)
+                print("\tLa spécialité a été ajoutée")
+            else:
+                print("\t! La spécialité indiquée n'existe pas")
     try: 
-        sql = "INSERT INTO PERSONNEL (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel, Poste) VALUES (%s, %s, %s, %s, %s, %s);" % (nom, prenom, date_de_naissance, adresse, numero_tel, poste)
+        sql = "INSERT INTO PERSONNEL (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel, Poste, Specialites) VALUES (%s, %s, %s, %s, %s, %s, '{\"specialites\" : %s}');" % (nom, prenom, date_de_naissance, adresse, numero_tel, poste, json.dumps(specialites))
         cur.execute(sql)
         conn.commit()
         print("\tCommande exécutée")
@@ -96,7 +116,7 @@ def rechercher_personnel(conn):
     print("\tVoici les membres du personnel trouvés pour votre requête :")
     print("\t#ID")
     for raw in res:
-        print("\t#%s\tPOSTE : %s\t\t%s %s (né le %s)\t(coordonnées : - tel: %s - adresse %s)" % (raw[0], raw[6], raw[1], raw[2], raw[3], raw[5], raw[4]))
+        print("\t#%s\tPOSTE : %s\t%s %s" % (raw[0], raw[6], raw[1], raw[2]))
     input()
     cur.close()
 

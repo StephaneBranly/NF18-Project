@@ -15,7 +15,8 @@ Prenom VARCHAR NOT NULL,
 DateDeNaissance DATE,
 Adresse VARCHAR,
 NumeroTel VARCHAR,
-Poste VARCHAR CHECK (Poste IN ('Veto', 'Assistant'))
+Poste VARCHAR CHECK (Poste IN ('Veto', 'Assistant')),
+Specialites JSON
 ) ;
 ALTER SEQUENCE personnel_id_seq OWNED BY PERSONNEL.ID;
 
@@ -133,7 +134,7 @@ INSERT INTO ESPECE (Espece) VALUES ('Canidés');
 INSERT INTO ESPECE (Espece) VALUES ('Reptiles');
 INSERT INTO ESPECE (Espece) VALUES ('Rongeurs');
 INSERT INTO ESPECE (Espece) VALUES ('Oiseaux');
-INSERT INTO ESPECE (Espece) VALUES ('autres');
+INSERT INTO ESPECE (Espece) VALUES ('Autres');
 
 
 INSERT INTO PATIENT (ID, Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)

@@ -3,6 +3,8 @@ import psycopg2
 import os
 from personnel import personnel_menu
 from clients import client_menu
+from patients import patient_menu
+from especes import espece_menu
 
 def init(conn):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
@@ -36,7 +38,9 @@ def menu(conn):
         print("\n\t0\tQuitter")
         print("\n\t1\tInitialisation de la BDD")
         print("\t2\tGestion des clients")
-        print("\t3\tGestion du personnel")
+        print("\t3\tGestion des patients")
+        print("\t4\tGestion du personnel")
+        print("\t5\tGestion des espèces")
         try:
             choice = int(input("\n> "))
         except:
@@ -58,8 +62,11 @@ def menu(conn):
         elif(choice == 2):
             client_menu(conn)
         elif(choice == 3):
+            patient_menu(conn)
+        elif(choice == 4):
             personnel_menu(conn)
-
+        elif(choice == 5):
+            espece_menu(conn)
 
 def main():
     try:

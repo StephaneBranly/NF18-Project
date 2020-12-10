@@ -26,8 +26,9 @@ CREATE TABLE ESPECE (
 Espece VARCHAR PRIMARY KEY
 ) ;
 
+CREATE SEQUENCE patient_id_seq;
 CREATE TABLE PATIENT (
-ID INTEGER PRIMARY KEY,
+ID smallint PRIMARY KEY DEFAULT nextval('patient_id_seq') ,
 Nom VARCHAR NOT NULL,
 DateDeNaissance DATE NOT NULL,
 Taille VARCHAR CHECK (Taille IN ('Petite', 'Moyenne')),
@@ -36,10 +37,12 @@ NumeroPasseport VARCHAR,
 Espece VARCHAR,
 FOREIGN KEY (Espece) REFERENCES ESPECE(espece)
 ) ;
+ALTER SEQUENCE patient_id_seq OWNED BY PATIENT.ID;
 
 CREATE TABLE MEDICAMENT (
 NomMolecule VARCHAR PRIMARY KEY,
-Description VARCHAR
+Description VARCHAR,
+InterditPour JSON
 ) ;
 
 CREATE TABLE MESURE (
@@ -107,13 +110,6 @@ FOREIGN KEY (ID_Patient) REFERENCES PATIENT(ID)
 
 );
 
-CREATE TABLE REL_PERSONNEL_ESPECE (
-ID_Personnel INTEGER NOT NULL,
-Espece VARCHAR NOT NULL,
-Taille VARCHAR,
-FOREIGN KEY (ID_Personnel) REFERENCES PERSONNEL(ID),
-FOREIGN KEY (Espece) REFERENCES ESPECE(Espece)
-);
 
 CREATE TABLE REL_TRAITEMENT_MEDICAMENT (
 NomMolecule VARCHAR NOT NULL,
@@ -123,14 +119,6 @@ FOREIGN KEY (NomMolecule) REFERENCES MEDICAMENT(NomMolecule),
 FOREIGN KEY (ID_Traitement) REFERENCES TRAITEMENT(ID)
 );
 
-CREATE TABLE REL_MEDICAMENT_ESPECE (
-NomMolecule VARCHAR NOT NULL,
-Espece VARCHAR NOT NULL,
-FOREIGN KEY (NomMolecule) REFERENCES MEDICAMENT(NomMolecule),
-FOREIGN KEY (Espece) REFERENCES ESPECE(Espece)
-);
-
-
 INSERT INTO ESPECE (Espece) VALUES ('Félins');
 INSERT INTO ESPECE (Espece) VALUES ('Canidés');
 INSERT INTO ESPECE (Espece) VALUES ('Reptiles');
@@ -139,14 +127,14 @@ INSERT INTO ESPECE (Espece) VALUES ('Oiseaux');
 INSERT INTO ESPECE (Espece) VALUES ('Autres');
 
 
-INSERT INTO PATIENT (ID, Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
-VALUES (1, 'Oscar', '2008-08-21', 'Petite', 1, 26, 'Reptiles') ;
+INSERT INTO PATIENT (Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
+VALUES ('Oscar', '2008-08-21', 'Petite', 1, 26, 'Reptiles') ;
 
-INSERT INTO PATIENT (ID, Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
-VALUES (2, 'Loulou', '2012-07-12', 'Petite', 2, 196, 'Canidés') ;
+INSERT INTO PATIENT (Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
+VALUES ('Loulou', '2012-07-12', 'Petite', 2, 196, 'Canidés') ;
 
-INSERT INTO PATIENT (ID, Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
-VALUES (3, 'Pilou', '2016-02-07', 'Moyenne', 3, 238, 'Oiseaux') ;
+INSERT INTO PATIENT (Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
+VALUES ('Pilou', '2016-02-07', 'Moyenne', 3, 238, 'Oiseaux') ;
 
 
 

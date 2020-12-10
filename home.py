@@ -38,7 +38,10 @@ def menu(conn):
         print("\n\t1\tInitialisation de la BDD")
         print("\t2\tGestion des clients et de leurs animaux")
         print("\t3\tGestion du personnel")
-        choice = int(input("\n> "))
+        try:
+            choice = int(input("\n> "))
+        except:
+            pass
         os.system("clear")
 
         if(choice == 0):

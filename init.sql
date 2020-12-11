@@ -48,7 +48,7 @@ InterditPour JSON
 CREATE TABLE MESURE (
 ID INTEGER PRIMARY KEY,
 IDPatient INTEGER NOT NULL,
-DateEtHeure DATE,
+DateEtHeure TIMESTAMP,
 Taille VARCHAR CHECK (Taille IN ('Petite', 'Moyenne')),
 Poids REAL ,
 CONSTRAINT CHK_TaillePoids CHECK (Taille IS NOT NULL OR Poids IS NOT NULL),
@@ -58,7 +58,7 @@ FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
 CREATE TABLE TRAITEMENT (
 ID INTEGER PRIMARY KEY,
 IDPatient INTEGER NOT NULL,
-DateEtHeure DATE ,
+DateEtHeure TIMESTAMP ,
 DateDebut DATE ,
 Duree INTEGER,
  FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
@@ -67,7 +67,7 @@ Duree INTEGER,
 CREATE TABLE RESULTAT_ANALYSE (
 ID INTEGER PRIMARY KEY,
 IDPatient INTEGER NOT NULL,
-DateEtHeure DATE,
+DateEtHeure TIMESTAMP,
 Resultat VARCHAR,
 FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
 );
@@ -76,7 +76,7 @@ CREATE TABLE OBSERVATION_GENERALE (
 ID INTEGER PRIMARY KEY,
 IDPatient INTEGER NOT NULL,
 IDPersonnel INTEGER NOT NULL,
-DateEtHeure DATE,
+DateEtHeure TIMESTAMP,
 Observation VARCHAR,
 FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID),
 FOREIGN KEY (IDPersonnel) REFERENCES PERSONNEL(ID)
@@ -85,7 +85,7 @@ FOREIGN KEY (IDPersonnel) REFERENCES PERSONNEL(ID)
 CREATE TABLE PROCEDURE (
 ID INTEGER PRIMARY KEY,
 IDPatient INTEGER  NOT NULL,
-DateEtHeure DATE,
+DateEtHeure TIMESTAMP,
 Description VARCHAR,
 FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
 ) ;
@@ -164,21 +164,21 @@ INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Paracé
 INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Benzopine', 'contre les inflammations','{"interditPour": ["Oiseaux"]}') ;
 INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Triplenide', 'contre les inflammations','{"interditPour": ["Reptiles"]}') ;
 
-INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (1, 1, '2020-10-22', 'Petite', 20 );
-INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (2, 2, '2019-08-23', 'Moyenne', 37 );
+INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (1, 1, '2020-10-22 07:35', 'Petite', 20 );
+INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (2, 2, '2019-08-23 09:24', 'Moyenne', 37 );
 
-INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (1, 1, '2020-10-22', '2020-11-01', 20);
-INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (2, 2, '2019-08-23', '2019-09-01', 30);
-INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (3, 2, '2019-08-25', '2019-10-01', 24);
+INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (1, 1, '2020-10-22 12:12', '2020-11-01', 20);
+INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (2, 2, '2019-08-23 14:53', '2019-09-01', 30);
+INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (3, 2, '2019-08-25 17:01', '2019-10-01', 24);
 
-INSERT INTO  RESULTAT_ANALYSE (ID, IDPatient, DateEtHeure, Resultat) VALUES (1, 1, '2020-10-22', 'bons');
-INSERT INTO  RESULTAT_ANALYSE (ID, IDPatient, DateEtHeure, Resultat) VALUES (2, 2, '2019-08-23', 'moyens');
+INSERT INTO  RESULTAT_ANALYSE (ID, IDPatient, DateEtHeure, Resultat) VALUES (1, 1, '2020-10-22 20:45', 'bons');
+INSERT INTO  RESULTAT_ANALYSE (ID, IDPatient, DateEtHeure, Resultat) VALUES (2, 2, '2019-08-23 21:01', 'moyens');
 
-INSERT INTO OBSERVATION_GENERALE (ID, IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (1, 1, 1, '2020-10-22', 'rien à signaler');
-INSERT INTO OBSERVATION_GENERALE (ID, IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (2, 2, 1, '2019-08-23', 'rien à signaler' );
+INSERT INTO OBSERVATION_GENERALE (ID, IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (1, 1, 1, '2020-10-22 14:03', 'rien à signaler');
+INSERT INTO OBSERVATION_GENERALE (ID, IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (2, 2, 1, '2019-08-23 14:15', 'rien à signaler' );
 
-INSERT INTO PROCEDURE (ID, IDPatient, DateEtHeure, Description) VALUES (1, 1, '2020-10-22', 'en cours' );
-INSERT INTO PROCEDURE (ID, IDPatient, DateEtHeure, Description) VALUES (2, 2, '2019-08-23', 'en cours' );
+INSERT INTO PROCEDURE (ID, IDPatient, DateEtHeure, Description) VALUES (1, 1, '2020-10-22 14:54', 'en cours' );
+INSERT INTO PROCEDURE (ID, IDPatient, DateEtHeure, Description) VALUES (2, 2, '2019-08-23 16:34', 'en cours' );
 
 INSERT INTO REL_TRAITEMENT_MEDICAMENT (NomMolecule, id_traitement, quantite) VALUES ('Triplenide', 1, 50);
 INSERT INTO REL_TRAITEMENT_MEDICAMENT (NomMolecule, id_traitement, quantite)  VALUES ('Benzopine', 2, 10);

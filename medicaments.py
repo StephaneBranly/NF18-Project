@@ -15,7 +15,7 @@ def medicament_menu(conn):
         print("\t1\tVoir les médicaments")
         print("\t2\tAjouter un médicament")
         print("\t3\tModifier un médicament")
-        print("\t4\tVoir le détail d'un médicament'")
+        print("\t4\tVoir le détail d'un médicament")
         choice = int(input("\n> "))
         os.system("clear")
 

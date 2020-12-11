@@ -164,6 +164,21 @@ def detail_membre_personnel(conn):
                 print("\t  - %s" % (specialite))
         except:
             pass
+
+    sql = "SELECT * FROM SOIGNANT_ACTUEL WHERE ID_Personnel=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tPatients actuels")
+    for raw in res:
+        print("\t  - #%s\t%s (depuis le %s)" % (raw[1],raw[0],raw[5]))
+   
+    sql = "SELECT * FROM SOIGNANT_PASSE WHERE ID_Personnel=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tAnciens patients")
+    for raw in res:
+        print("\t  - #%s\t%s (du %s au %s)" % (raw[1],raw[0],raw[5],raw[6]))
+    print('\n')
     input()
     cur.close()
 

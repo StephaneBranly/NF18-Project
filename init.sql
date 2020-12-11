@@ -97,7 +97,6 @@ DateDebut DATE NOT NULL,
 DateFin DATE,
 FOREIGN KEY (ID_Client) REFERENCES CLIENT(ID),
 FOREIGN KEY (ID_Patient) REFERENCES PATIENT(ID)
-
 );
 
 CREATE TABLE REL_PATIENT_PERSONNEL (
@@ -107,7 +106,6 @@ DateDebut DATE NOT NULL,
 DateFin DATE,
 FOREIGN KEY (ID_Personnel) REFERENCES PERSONNEL(ID),
 FOREIGN KEY (ID_Patient) REFERENCES PATIENT(ID)
-
 );
 
 
@@ -136,6 +134,8 @@ VALUES ('Loulou', '2012-07-12', 'Petite', 2, 196, 'Canidés') ;
 INSERT INTO PATIENT (Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
 VALUES ('Pilou', '2016-02-07', 'Moyenne', 3, 238, 'Oiseaux') ;
 
+INSERT INTO PATIENT (Nom, DateDeNaissance, Taille, NumeroPuceID, NumeroPasseport, Espece)
+VALUES ('Titie', '2009-02-07', 'Moyenne', 4, 2385435345, 'Félins') ;
 
 
 INSERT INTO CLIENT (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel)
@@ -144,19 +144,25 @@ VALUES ('Kerjean', 'Loïck', '2000-07-26', '30 rue de paris 60200', '0659046286'
 INSERT INTO CLIENT (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel)
 VALUES ('Trupin', 'Louis', '1999-08-22', '10 rue de la liberté 02600', '0756927645') ;
 
-
-
-INSERT INTO PERSONNEL (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel, Poste)
-VALUES ('Machin', 'Jean', '1965-12-12', '15 rue de Paris 60200', '0657834586', 'Veto') ;
-
-INSERT INTO PERSONNEL (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel, Poste)
-VALUES ('Bidule', 'Pierre', '1982-04-14', '1 rue de la corne du Cerf 60200', '0633562312', 'Assistant') ;
+INSERT INTO CLIENT (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel)
+VALUES ('Branly', 'Stéphane', '2000-01-27', '14 rue des Lombards 60200', '0762383812') ;
 
 
 
-INSERT INTO MEDICAMENT (NomMolecule, Description) VALUES ('Paracétamol', 'calme les douleurs') ;
-INSERT INTO MEDICAMENT (NomMolecule, Description) VALUES ('Benzopine', 'contre les inflammations') ;
-INSERT INTO MEDICAMENT (NomMolecule, Description) VALUES ('Triplenide', 'réduit les saignements') ;
+INSERT INTO PERSONNEL (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel, Poste, Specialites)
+VALUES ('Dupont', 'Jean', '1965-12-12', '15 rue de Paris 60200', '0657834586', 'Veto', '{"specialites": ["Félins", "Autres"]}') ;
+
+INSERT INTO PERSONNEL (Nom, Prenom, DateDeNaissance, Adresse, NumeroTel, Poste, Specialites)
+VALUES ('Watel', 'Pierre', '1982-04-14', '1 rue de la corne du Cerf 60200', '0633562312', 'Assistant', '{"specialites": ["Rongeurs"]}') ;
+
+
+INSERT INTO REL_PATIENT_CLIENT (ID_Patient, ID_Client, DateDebut, DateFin) VALUES (4,3,'2010-04-25',null);
+INSERT INTO REL_PATIENT_PERSONNEL (ID_Patient, ID_Personnel, DateDebut, DateFin) VALUES (4,1,'2010-05-10',null);
+
+
+INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Paracétamol', 'calme les douleurs','{"interditPour": ["Rongeurs"]}') ;
+INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Benzopine', 'contre les inflammations','{"interditPour": ["Oiseaux"]}') ;
+INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Triplenide', 'contre les inflammations','{"interditPour": ["Reptiles"]}') ;
 
 INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (1, 1, '2020-10-22', 'Petite', 20 );
 INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (2, 2, '2019-08-23', 'Moyenne', 37 );
@@ -200,3 +206,33 @@ SELECT PATIENT.Espece, COUNT(*) AS NBR_TRAITEMENT_ESPECE
 FROM TRAITEMENT INNER JOIN PATIENT 
 ON PATIENT.ID = TRAITEMENT.IDPATIENT
 GROUP BY PATIENT.Espece;
+
+CREATE VIEW PROPRIETAIRE_ACTUEL AS 
+SELECT PATIENT.NOM AS Nom_animal, REL_PATIENT_CLIENT.ID_Patient, REL_PATIENT_CLIENT.ID_Client, CLIENT.NOM, CLIENT.PRENOM, REL_PATIENT_CLIENT.DateDebut
+FROM REL_PATIENT_CLIENT INNER JOIN CLIENT
+ON REL_PATIENT_CLIENT.ID_Client = CLIENT.ID
+INNER JOIN PATIENT ON REL_PATIENT_CLIENT.ID_Patient = PATIENT.ID
+WHERE REL_PATIENT_CLIENT.DateFin IS NULL;
+
+
+CREATE VIEW SOIGNANT_ACTUEL AS 
+SELECT PATIENT.NOM AS Nom_animal, REL_PATIENT_PERSONNEL.ID_Patient, REL_PATIENT_PERSONNEL.ID_Personnel, PERSONNEL.NOM, PERSONNEL.PRENOM, REL_PATIENT_PERSONNEL.DateDebut
+FROM REL_PATIENT_PERSONNEL INNER JOIN PERSONNEL
+ON REL_PATIENT_PERSONNEL.ID_Personnel = PERSONNEL.ID
+INNER JOIN PATIENT ON REL_PATIENT_PERSONNEL.ID_Patient = PATIENT.ID
+WHERE REL_PATIENT_PERSONNEL.DateFin IS NULL;
+
+CREATE VIEW PROPRIETAIRE_PASSE AS 
+SELECT PATIENT.NOM AS Nom_animal, REL_PATIENT_CLIENT.ID_Patient, REL_PATIENT_CLIENT.ID_Client, CLIENT.NOM, CLIENT.PRENOM, REL_PATIENT_CLIENT.DateDebut, REL_PATIENT_CLIENT.DateFin
+FROM REL_PATIENT_CLIENT INNER JOIN CLIENT
+ON REL_PATIENT_CLIENT.ID_Client = CLIENT.ID
+INNER JOIN PATIENT ON REL_PATIENT_CLIENT.ID_Patient = PATIENT.ID
+WHERE REL_PATIENT_CLIENT.DateFin IS NOT NULL;
+
+
+CREATE VIEW SOIGNANT_PASSE AS 
+SELECT PATIENT.NOM AS Nom_animal, REL_PATIENT_PERSONNEL.ID_Patient, REL_PATIENT_PERSONNEL.ID_Personnel, PERSONNEL.NOM, PERSONNEL.PRENOM, REL_PATIENT_PERSONNEL.DateDebut, REL_PATIENT_PERSONNEL.DateFin
+FROM REL_PATIENT_PERSONNEL INNER JOIN PERSONNEL
+ON REL_PATIENT_PERSONNEL.ID_Personnel = PERSONNEL.ID
+INNER JOIN PATIENT ON REL_PATIENT_PERSONNEL.ID_Patient = PATIENT.ID
+WHERE REL_PATIENT_PERSONNEL.DateFin IS NOT NULL;

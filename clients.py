@@ -116,6 +116,21 @@ def detail_client(conn):
         print("\t%s %s (né le %s)" % (raw[2],raw[1],raw[3]))
         print("\tTelephone : %s" % raw[5])
         print("\tAdresse : %s" % raw[4])
+    
+    sql = "SELECT * FROM PROPRIETAIRE_ACTUEL WHERE ID_Client=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tAnimaux actuels")
+    for raw in res:
+        print("\t  - #%s\t%s (depuis le %s)" % (raw[1],raw[0],raw[5]))
+   
+    sql = "SELECT * FROM PROPRIETAIRE_PASSE WHERE ID_Client=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tAnciens animaux")
+    for raw in res:
+        print("\t  - #%s\t%s (du %s au %s)" % (raw[1],raw[0],raw[5],raw[6]))
+    print('\n')
     input()
     cur.close()
 

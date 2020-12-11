@@ -123,6 +123,35 @@ def detail_patient(conn):
         print("\tTaille : %s" % raw[3])
         print("\tNuméro de puce : %s" % raw[4])
         print("\tNuméro de passeport : %s" % raw[5])
+
+    sql = "SELECT * FROM PROPRIETAIRE_ACTUEL WHERE ID_Patient=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tPropriétaire actuel")
+    for raw in res:
+        print("\t  - #%s\t%s %s (depuis le %s)" % (raw[2],raw[3],raw[4],raw[5]))
+   
+    sql = "SELECT * FROM PROPRIETAIRE_PASSE WHERE ID_Patient=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tAnciens propriétaires")
+    for raw in res:
+        print("\t  - #%s\t%s %s (du %s au %s)" % (raw[2],raw[3],raw[4],raw[5],raw[6]))
+
+    sql = "SELECT * FROM SOIGNANT_ACTUEL WHERE ID_Patient=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tSoignants actuels")
+    for raw in res:
+        print("\t  - #%s\t%s %s (depuis le %s)" % (raw[2],raw[3],raw[4],raw[5]))
+   
+    sql = "SELECT * FROM SOIGNANT_PASSE WHERE ID_Patient=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tAnciens soignants")
+    for raw in res:
+        print("\t  - #%s\t%s %s (du %s au %s)" % (raw[2],raw[3],raw[4],raw[5],raw[6]))
+    print('\n')
     input()
     cur.close()
 

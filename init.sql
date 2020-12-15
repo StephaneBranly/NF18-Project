@@ -45,35 +45,42 @@ Description VARCHAR,
 InterditPour JSON
 ) ;
 
+CREATE SEQUENCE mesure_id_seq;
 CREATE TABLE MESURE (
-ID INTEGER PRIMARY KEY,
+ID smallint PRIMARY KEY DEFAULT nextval('mesure_id_seq') ,
 IDPatient INTEGER NOT NULL,
 DateEtHeure TIMESTAMP,
-Taille VARCHAR CHECK (Taille IN ('Petite', 'Moyenne')),
+Taille REAL,
 Poids REAL ,
 CONSTRAINT CHK_TaillePoids CHECK (Taille IS NOT NULL OR Poids IS NOT NULL),
 FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
 ) ;
+ALTER SEQUENCE mesure_id_seq OWNED BY MESURE.ID;
 
+CREATE SEQUENCE traitement_id_seq;
 CREATE TABLE TRAITEMENT (
-ID INTEGER PRIMARY KEY,
+ID smallint PRIMARY KEY DEFAULT nextval('traitement_id_seq') ,
 IDPatient INTEGER NOT NULL,
 DateEtHeure TIMESTAMP ,
 DateDebut DATE ,
 Duree INTEGER,
  FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
 ) ;
+ALTER SEQUENCE traitement_id_seq OWNED BY TRAITEMENT.ID;
 
+CREATE SEQUENCE resultat_analyse_id_seq;
 CREATE TABLE RESULTAT_ANALYSE (
-ID INTEGER PRIMARY KEY,
+ID smallint PRIMARY KEY DEFAULT nextval('resultat_analyse_id_seq') ,
 IDPatient INTEGER NOT NULL,
 DateEtHeure TIMESTAMP,
 Resultat VARCHAR,
 FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
 );
+ALTER SEQUENCE resultat_analyse_id_seq OWNED BY RESULTAT_ANALYSE.ID;
 
+CREATE SEQUENCE observation_generale_id_seq;
 CREATE TABLE OBSERVATION_GENERALE (
-ID INTEGER PRIMARY KEY,
+ID smallint PRIMARY KEY DEFAULT nextval('observation_generale_id_seq') ,
 IDPatient INTEGER NOT NULL,
 IDPersonnel INTEGER NOT NULL,
 DateEtHeure TIMESTAMP,
@@ -81,14 +88,17 @@ Observation VARCHAR,
 FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID),
 FOREIGN KEY (IDPersonnel) REFERENCES PERSONNEL(ID)
 ) ;
+ALTER SEQUENCE observation_generale_id_seq OWNED BY OBSERVATION_GENERALE.ID;
 
+CREATE SEQUENCE procedure_id_seq;
 CREATE TABLE PROCEDURE (
-ID INTEGER PRIMARY KEY,
+ID smallint PRIMARY KEY DEFAULT nextval('procedure_id_seq') ,
 IDPatient INTEGER  NOT NULL,
 DateEtHeure TIMESTAMP,
 Description VARCHAR,
 FOREIGN KEY (IDPatient) REFERENCES PATIENT(ID)
 ) ;
+ALTER SEQUENCE procedure_id_seq OWNED BY PROCEDURE.ID;
 
 CREATE TABLE REL_PATIENT_CLIENT (
 ID_Client INTEGER NOT NULL,
@@ -164,21 +174,21 @@ INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Paracé
 INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Benzopine', 'contre les inflammations','{"interditPour": ["Oiseaux"]}') ;
 INSERT INTO MEDICAMENT (NomMolecule, Description, InterditPour) VALUES ('Triplenide', 'contre les inflammations','{"interditPour": ["Reptiles"]}') ;
 
-INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (1, 1, '2020-10-22 07:35', 'Petite', 20 );
-INSERT INTO MESURE (ID, IDPatient, DateEtHeure, Taille, poids) VALUES (2, 2, '2019-08-23 09:24', 'Moyenne', 37 );
+INSERT INTO MESURE (IDPatient, DateEtHeure, Taille, poids) VALUES (1, '2020-10-22 07:35', 12, 20 );
+INSERT INTO MESURE (IDPatient, DateEtHeure, Taille, poids) VALUES (2, '2019-08-23 09:24', 45, 37 );
 
-INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (1, 1, '2020-10-22 12:12', '2020-11-01', 20);
-INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (2, 2, '2019-08-23 14:53', '2019-09-01', 30);
-INSERT INTO TRAITEMENT (ID, IDPatient, DateEtHeure, DateDebut, Duree) VALUES (3, 2, '2019-08-25 17:01', '2019-10-01', 24);
+INSERT INTO TRAITEMENT (IDPatient, DateEtHeure, DateDebut, Duree) VALUES (1, '2020-10-22 12:12', '2020-11-01', 20);
+INSERT INTO TRAITEMENT (IDPatient, DateEtHeure, DateDebut, Duree) VALUES (2, '2019-08-23 14:53', '2019-09-01', 30);
+INSERT INTO TRAITEMENT (IDPatient, DateEtHeure, DateDebut, Duree) VALUES (2, '2019-08-25 17:01', '2019-10-01', 24);
 
-INSERT INTO  RESULTAT_ANALYSE (ID, IDPatient, DateEtHeure, Resultat) VALUES (1, 1, '2020-10-22 20:45', 'bons');
-INSERT INTO  RESULTAT_ANALYSE (ID, IDPatient, DateEtHeure, Resultat) VALUES (2, 2, '2019-08-23 21:01', 'moyens');
+INSERT INTO  RESULTAT_ANALYSE (IDPatient, DateEtHeure, Resultat) VALUES (1, '2020-10-22 20:45', 'bons');
+INSERT INTO  RESULTAT_ANALYSE (IDPatient, DateEtHeure, Resultat) VALUES (2, '2019-08-23 21:01', 'moyens');
 
-INSERT INTO OBSERVATION_GENERALE (ID, IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (1, 1, 1, '2020-10-22 14:03', 'rien à signaler');
-INSERT INTO OBSERVATION_GENERALE (ID, IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (2, 2, 1, '2019-08-23 14:15', 'rien à signaler' );
+INSERT INTO OBSERVATION_GENERALE (IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (1, 1, '2020-10-22 14:03', 'rien à signaler');
+INSERT INTO OBSERVATION_GENERALE (IDPatient, IDPersonnel, DateEtHeure, Observation) VALUES (2, 1, '2019-08-23 14:15', 'rien à signaler' );
 
-INSERT INTO PROCEDURE (ID, IDPatient, DateEtHeure, Description) VALUES (1, 1, '2020-10-22 14:54', 'en cours' );
-INSERT INTO PROCEDURE (ID, IDPatient, DateEtHeure, Description) VALUES (2, 2, '2019-08-23 16:34', 'en cours' );
+INSERT INTO PROCEDURE (IDPatient, DateEtHeure, Description) VALUES (1, '2020-10-22 14:54', 'en cours' );
+INSERT INTO PROCEDURE (IDPatient, DateEtHeure, Description) VALUES (2, '2019-08-23 16:34', 'en cours' );
 
 INSERT INTO REL_TRAITEMENT_MEDICAMENT (NomMolecule, id_traitement, quantite) VALUES ('Triplenide', 1, 50);
 INSERT INTO REL_TRAITEMENT_MEDICAMENT (NomMolecule, id_traitement, quantite)  VALUES ('Benzopine', 2, 10);

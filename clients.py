@@ -17,6 +17,7 @@ def client_menu(conn):
         print("\t3\tModifier un client")
         print("\t4\tRechercher un client par son nom ou prénom")
         print("\t5\tVoir le détail de la fiche d'un client")
+        
         choice = int(input("\n> "))
         os.system("clear")
 
@@ -133,6 +134,8 @@ def detail_client(conn):
     print('\n')
     input()
     cur.close()
+
+
 
 def quote(s):
     if s:

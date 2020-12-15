@@ -114,6 +114,7 @@ def modifier_medicament(conn):
         conn.commit()
         cur.close()
     except psycopg2.Error:
+        conn.rollback()
         print("Erreur lors de la mise à jour, merci de réessayer.")
 
 def detail_medicament(conn):

@@ -3,6 +3,7 @@ import psycopg2
 import os
 import datetime
 import json 
+from dossier_medical import dossier_medical_menu
 
 def patient_menu(conn):
     choice = 0
@@ -17,6 +18,11 @@ def patient_menu(conn):
         print("\t3\tModifier un patient")
         print("\t4\tRechercher un patient par numero de puce ou passeport")
         print("\t5\tVoir le détail du dossier médical d'un patient")
+
+        print("\n\t6\tDéclarer un changement de proprietaire")
+        print("\t7\tDéclarer une modification de personnel soignant")
+
+        print("\n\t8\tAjouter une pièce dans le dossier médical")
         choice = int(input("\n> "))
         os.system("clear")
 
@@ -33,6 +39,14 @@ def patient_menu(conn):
             rechercher_patient(conn)
         elif(choice==5):
             detail_patient(conn)
+        elif(choice==6):
+            changement_de_proprietaire(conn)
+        elif(choice==7):
+            changement_de_personnel_soignant(conn)
+        elif(choice==8):
+            print("\tVeuillez indiquer l'ID du patient :")
+            id = int(input("\n> "))
+            dossier_medical_menu(conn,id)
 
 
 def voir_patients(conn):
@@ -76,7 +90,7 @@ def ajouter_patient(conn):
     cur.close()
 
 def modifier_patient(conn):
-    print("\tVeuillez indiquer l'ID du client à modifier :")
+    print("\tVeuillez indiquer l'ID du patient à modifier :")
     id = int(input("\n> "))
     print("\n\tVeuillez indiquer l'information que vous voulez modifier :")
     print("\tnom")
@@ -93,6 +107,7 @@ def modifier_patient(conn):
         conn.commit()
         cur.close()
     except psycopg2.Error:
+        conn.rollback()
         print("Erreur lors de la mise à jour, merci de réessayer.")
 
 def rechercher_patient(conn):
@@ -153,7 +168,92 @@ def detail_patient(conn):
         print("\t  - #%s\t%s %s (du %s au %s)" % (raw[2],raw[3],raw[4],raw[5],raw[6]))
     print('\n')
     input()
+
+    sql = "SELECT * FROM MESURE WHERE IDPatient=%i ORDER BY DateEtHeure DESC" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tMesures")
+    for raw in res:
+        print("\t  - #%s\tPoids: %s - Taille %s (le %s)" % (raw[0],raw[4],raw[3],raw[2]))
+
+    sql = "SELECT * FROM PROCEDURE WHERE IDPatient=%i ORDER BY DateEtHeure DESC" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tProcedures")
+    for raw in res:
+        print("\t  - #%s\tDescription: %s (le %s)" % (raw[0],raw[3],raw[2]))
+
+    sql = "SELECT * FROM OBSERVATION_GENERALE WHERE IDPatient=%i ORDER BY DateEtHeure DESC" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tObservations")
+    for raw in res:
+        print("\t  - #%s\tFaite par le soignant #%s - Observation %s (le %s)" % (raw[0],raw[2],raw[4],raw[3]))
+
+    sql = "SELECT * FROM RESULTAT_ANALYSE WHERE IDPatient=%i ORDER BY DateEtHeure DESC" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tRésultats d'analyse")
+    for raw in res:
+        print("\t  - #%s\tRésultat d'analyse : %s (le %s)" % (raw[0],raw[3],raw[2]))
+    print('\n')
+    input()
     cur.close()
+
+def changement_de_personnel_soignant(conn):
+    cur = conn.cursor()
+    print("\tVeuillez indiquer l'ID du patient:")
+    ID = int(input("\n> "))
+    sql = "SELECT * FROM SOIGNANT_ACTUEL WHERE ID_Patient=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tSoignants actuels")
+    for raw in res:
+        print("\t  - #%s\t%s %s (depuis le %s)" % (raw[2],raw[3],raw[4],raw[5]))
+    print("\t(Le soignant indiqué vera son statut changer (fin ou début))")
+    print("\tVeuillez indiquer l'ID du soignant:")
+    ID_soignant = int(input("\n> "))
+    try:
+        sql = "SELECT * FROM REL_PATIENT_PERSONNEL WHERE ID_Patient=%i AND ID_Personnel=%i AND DateFin IS NULL" % (ID,ID_soignant)
+        cur.execute(sql)
+        res = cur.fetchall()
+        if(res):
+            sql = "UPDATE REL_PATIENT_PERSONNEL SET DateFin=DATE(NOW()) WHERE ID_Personnel=%i AND ID_Patient=%i;" % (ID_soignant,ID)
+        else:
+            sql = "INSERT INTO REL_PATIENT_PERSONNEL (ID_Personnel,ID_Patient,DateDebut) VALUES (%i,%i,DATE(NOW()));" % (ID_soignant,ID)
+        cur.execute(sql)
+        conn.commit()
+        cur.close()
+    except psycopg2.Error:
+        conn.rollback()
+        print("Erreur lors de la mise à jour, merci de réessayer.")
+
+def changement_de_proprietaire(conn):
+    cur = conn.cursor()
+    print("\tVeuillez indiquer l'ID du patient:")
+    ID = int(input("\n> "))
+    sql = "SELECT * FROM PROPRIETAIRE_ACTUEL WHERE ID_Patient=%i" % (ID)
+    cur.execute(sql)
+    res = cur.fetchall()
+    print("\n\tPropriétaire actuel")
+    for raw in res:
+        print("\t  - #%s\t%s %s (depuis le %s)" % (raw[2],raw[3],raw[4],raw[5]))
+    print("\tVeuillez entrer l'ID du nouveau propriétaire")
+    print("\t(Le propriétaire actuel sera alors déclaré comme ancien en cette date.)")
+
+    print("\tVeuillez indiquer l'ID du nouveau propriétaire:")
+    ID_client = int(input("\n> "))
+    try:
+        sql = "UPDATE REL_PATIENT_CLIENT SET DateFin=DATE(NOW()) WHERE ID_Patient=%i;" % (ID)
+        cur.execute(sql)
+        sql = "INSERT INTO REL_PATIENT_CLIENT (ID_Client,ID_Patient,DateDebut) VALUES (%i,%i,DATE(NOW()));" % (ID_client,ID)
+        cur.execute(sql)
+        conn.commit()
+        cur.close()
+    except psycopg2.Error:
+        conn.rollback()
+        print("Erreur lors de la mise à jour, merci de réessayer.")
+
 
 def quote(s):
     if s:

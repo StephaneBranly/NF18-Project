@@ -129,6 +129,7 @@ def modifier_membre_personnel(conn):
         conn.commit()
         cur.close()
     except psycopg2.Error:
+        conn.rollback()
         print("Erreur lors de la mise à jour, merci de réessayer.")
 
 def rechercher_membre_personnel(conn):
